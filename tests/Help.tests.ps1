@@ -1,6 +1,6 @@
 # Taken with love from @juneb_get_help (https://raw.githubusercontent.com/juneb/PesterTDD/master/Module.Help.Tests.ps1)
 
-BeforeDiscovery {
+BeforeAll {
 
     function script:FilterOutCommonParams {
         param ($Params)
