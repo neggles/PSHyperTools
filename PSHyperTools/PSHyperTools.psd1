@@ -98,13 +98,13 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/neg2led/PSHyperTools/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/neg2led/PSHyperTools'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://neg2led.github.io/PSHyperTools/assets/icon.ico'
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''
@@ -126,7 +126,7 @@ PrivateData = @{
 # HelpInfoURI = ''
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-# DefaultCommandPrefix = ''
+# DefaultCommandPrefix = 'GPUP'
 
 }
 
