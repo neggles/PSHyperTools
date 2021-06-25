@@ -161,4 +161,3 @@ function New-GPUPDriverPackage {
         Write-Output -InputObject ('Driver package generation complete.')
     }
 }
-Export-ModuleMember -Function 'New-GPUPDriverPackage'
