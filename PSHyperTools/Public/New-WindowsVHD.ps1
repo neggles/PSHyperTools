@@ -26,7 +26,7 @@ function New-WindowsVHD {
         PositionalBinding = $false,
         HelpUri = 'https://neg2led.github.io/HVStuff/New-WindowsVhdx',
         ConfirmImpact = 'Medium')]
-    [Alias()]
+    [Alias('New-WindowsVHDX')]
     [OutputType([String])]
     Param (
         [Parameter(Mandatory = $true,
@@ -42,7 +42,7 @@ function New-WindowsVHD {
             HelpMessage = "Windows image index (defaults to 1)")]
         [Alias("Index")]
         [ValidateNotNullOrEmpty()]
-        [integer]
+        [UInt32]
         $ImageIndex = 1,
 
 
@@ -60,7 +60,7 @@ function New-WindowsVHD {
         [Alias("Size")]
         [ValidateNotNullOrEmpty()]
         [ValidateRange(32GB, 2TB)]
-        [integer]
+        [UInt64]
         $SizeBytes = 127GB,
 
         [Parameter(Mandatory = $false,
