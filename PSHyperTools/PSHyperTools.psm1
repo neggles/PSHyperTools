@@ -1,7 +1,7 @@
 # Main module load file.
 
 # Load classes
-$moduleClasses = Get-ChildItem  -Recurse -Path (Join-Path -Path $PSScriptRoot -ChildPath 'Public') -Include '*.ps1' -Exclude '*.tests.ps1' -ErrorAction Stop
+$moduleClasses = Get-ChildItem -Recurse -Path (Join-Path -Path $PSScriptRoot -ChildPath 'Classes') -Include '*.ps1' -Exclude '*.tests.ps1' -ErrorAction Stop
 foreach ($class in $moduleClasses) {
     try {
         . $class.FullName

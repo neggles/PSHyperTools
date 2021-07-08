@@ -9,13 +9,7 @@ param(
 
     # List available build tasks
     [parameter(ParameterSetName = 'Help')]
-    [switch]$Help,
-
-    # Optional properties to pass to psake
-    [hashtable]$Properties,
-
-    # Optional parameters to pass to psake
-    [hashtable]$Parameters
+    [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
@@ -24,24 +18,21 @@ $ErrorActionPreference = 'Stop'
 if ($Bootstrap.IsPresent) {
     Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    if ((Test-Path -Path ./requirements.psd1)) {
-        if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-            Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
-        }
-        Import-Module -Name PSDepend -Verbose:$false
-        Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
-    } else {
-        Write-Warning 'No [requirements.psd1] found. Skipping build dependency installation.'
+    if (-not (Get-Module -Name PSDepend -ListAvailable)) {
+        Install-module -Name PSDepend -Repository PSGallery
     }
+    Import-Module -Name PSDepend -Verbose:$false
+    Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
 }
 
 # Execute psake task(s)
 $psakeFile = './psakeFile.ps1'
 if ($PSCmdlet.ParameterSetName -eq 'Help') {
-    Get-PSakeScriptTasks -buildFile $psakeFile |
+    Get-PSakeScriptTasks -buildFile $psakeFile  |
         Format-Table -Property Name, Description, Alias, DependsOn
 } else {
     Set-BuildEnvironment -Force
-    Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties -parameters $Parameters
-    exit ([int](-not $psake.build_success))
+
+    Invoke-psake -buildFile $psakeFile -taskList $Task -nologo
+    exit ( [int]( -not $psake.build_success ) )
 }

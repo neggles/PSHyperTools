@@ -33,7 +33,7 @@ Copyright = '(c) Andrew Powers-Holmes. All rights reserved.'
 Description = 'PowerShell utility module for Hyper-V'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '5.0'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -48,10 +48,10 @@ Description = 'PowerShell utility module for Hyper-V'
 # ClrVersion = ''
 
 # Processor architecture (None, X86, Amd64) required by this module
-# ProcessorArchitecture = ''
+ProcessorArchitecture = 'Amd64'
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @('Hyper-V')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -126,8 +126,6 @@ PrivateData = @{
 # HelpInfoURI = ''
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-# DefaultCommandPrefix = 'GPUP'
+# DefaultCommandPrefix = ''
 
 }
-
-

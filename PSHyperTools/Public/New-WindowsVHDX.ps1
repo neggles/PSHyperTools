@@ -20,16 +20,17 @@
 .FUNCTIONALITY
     The functionality that best describes this cmdlet
 #>
-function New-WindowsVHD {
+function New-WindowsVHDX {
     [CmdletBinding(
-        DefaultParameterSetName = 'Parameter Set 1',
+        SupportsShouldProcess = $true,
         PositionalBinding = $false,
-        HelpUri = 'https://neg2led.github.io/HVStuff/New-WindowsVhdx',
+        HelpUri = 'https://neg2led.github.io/PSHyperTools/New-WindowsVHDX',
         ConfirmImpact = 'Medium')]
-    [Alias('New-WindowsVHDX')]
+    [Alias('New-WindowsVHD')]
     [OutputType([String])]
     Param (
-        [Parameter(Mandatory = $true,
+        [Parameter(
+            Mandatory = $true,
             Position = 0,
             HelpMessage = "Path to source ISO image.")]
         [Alias("ISOPath")]
@@ -37,7 +38,8 @@ function New-WindowsVHD {
         [string]
         $ImagePath,
 
-        [Parameter(Mandatory = $false,
+        [Parameter(
+            Mandatory = $false,
             Position = 1,
             HelpMessage = "Windows image index (defaults to 1)")]
         [Alias("Index")]
@@ -46,7 +48,8 @@ function New-WindowsVHD {
         $ImageIndex = 1,
 
 
-        [Parameter(Mandatory = $true,
+        [Parameter(
+            Mandatory = $true,
             Position = 2,
             HelpMessage = "Destination path for the VHDX image.")]
         [Alias("OutPath", "VHDPath")]
@@ -54,7 +57,8 @@ function New-WindowsVHD {
         [string]
         $Destination,
 
-        [Parameter(Mandatory = $false,
+        [Parameter(
+            Mandatory = $false,
             Position = 3,
             HelpMessage = "Size (in bytes) of the VHDX to create")]
         [Alias("Size")]
@@ -63,14 +67,16 @@ function New-WindowsVHD {
         [UInt64]
         $SizeBytes = 127GB,
 
-        [Parameter(Mandatory = $false,
+        [Parameter(
+            Mandatory = $false,
             Position = 4,
             HelpMessage = "VHD type to create, dynamic (default) or fixed")]
         [ValidateSet('Dynamic', 'Fixed')]
         [string]
         $VHDType = 'Dynamic',
 
-        [Parameter(Mandatory = $false,
+        [Parameter(
+            Mandatory = $false,
             Position = 5,
             HelpMessage = "Path to unattend.xml to apply (if desired) with DISM offline deploy.")]
         [Alias("Unattend", "AutoUnattend")]
@@ -78,7 +84,8 @@ function New-WindowsVHD {
         [string]
         $UnattendPath,
 
-        [Parameter(Mandatory = $false,
+        [Parameter(
+            Mandatory = $false,
             Position = 6,
             HelpMessage = "boolean to enable or disable RD by default")]
         [boolean]
@@ -133,11 +140,11 @@ function New-WindowsVHD {
 
             # build parameters
             $Params = @{
-                SourcePath = $SourcePath
-                VHDPath = $VHDPath
-                Edition = $ImageIndex
-                SizeBytes = $SizeBytes
-                VHDType = $VHDType
+                SourcePath          = $SourcePath
+                VHDPath             = $VHDPath
+                Edition             = $ImageIndex
+                SizeBytes           = $SizeBytes
+                VHDType             = $VHDType
                 VhdFormat           = 'VHDX'
                 BcdInVhd            = 'VirtualMachine'
                 DiskLayout          = 'UEFI'
@@ -147,7 +154,9 @@ function New-WindowsVHD {
                 $Params.Add('UnattendPath', $UnattendPath)
             }
             # do the it
-            _ConvertWindowsImage @Params
+            if ($PSCmdlet.ShouldProcess('Create', 'Windows VHDX')) {
+                _ConvertWindowsImage @Params
+            }
         } catch {
             throw $PSItem
         } finally {

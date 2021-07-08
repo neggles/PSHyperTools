@@ -11,6 +11,9 @@
     'psake' = @{
         Version = '4.9.0'
     }
+    'platyPS' = @{
+        Version = '0.14.1'
+    }
     'BuildHelpers' = @{
         Version = '2.0.16'
     }

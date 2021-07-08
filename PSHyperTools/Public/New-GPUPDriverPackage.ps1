@@ -84,12 +84,19 @@ function New-GPUPDriverPackage {
             Write-Output -InputObject ('Creating GPU-P driver package for host {0}' -f $Env:COMPUTERNAME)
             Write-Output -InputObject ('Destination path: {0}' -f (Join-Path -Path $ArchiveFolder -ChildPath $ArchiveName))
 
+            <#
+                Determine which cmdlet we should use to gather the list of GPU-P capable GPUs.
+                On Windows builds before Server 2022/21H2, the cmdlet is 'Get-VMPartitionableGpu'
+                On later builds, it's 'Get-VMHostPartitionableGpu', and the old cmdlet just prints an error.
+                So, we check if Get-VMHostPartitionableGpu is a valid cmdlet to determine whether we should use it.
+            #>
             Write-Output -InputObject "Getting all GPU-P capable GPUs in the current system..."
-            # requires some care as the command name changed in Server 2022/W10 21H2
-            try {
-                $PVCapableGPUs = Get-VMPartitionableGpu
-            } catch {
+            if (Get-Command -Name 'Get-VMHostPartitionableGpu' -ErrorAction SilentlyContinue) {
+                Write-Verbose -Message 'Using new Get-VMHostPartitionableGpu cmdlet'
                 $PVCapableGPUs = Get-VMHostPartitionableGpu
+            } else {
+                Write-Verbose -Message 'Using old Get-VMPartitionableGpu cmdlet'
+                $PVCapableGPUs = Get-VMPartitionableGpu
             }
 
             # if we found no GPU-P capable GPUs, throw an exception
@@ -110,10 +117,10 @@ function New-GPUPDriverPackage {
 
 
             # Map each PVCapableGPU to the corresponding PnPDevice. Regex (mostly) extracts the InstanceId from the VMPartitionableGpu 'name' property.
-            Write-Output -InputObject ('Mapping GPU-P capable GPUs to their corresponding PnPDevice objects')
+            Write-Output -InputObject ('Mapping GPU-P capable GPUs to their corresponding PnPDevice objects...')
             $InstanceExpr = [regex]::New('^\\\\\?\\(.+)#.*$')
             $TargetGPUs = $PVCapableGPUs.Name | ForEach-Object -Process {
-                # I'm not proud of this, no sir
+                # I'm not proud of this dirty regex trick, but it works.
                 Get-PnpDevice -InstanceId $InstanceExpr.Replace($_, '$1').Replace('#', '\')
             }
 
@@ -152,7 +159,7 @@ function New-GPUPDriverPackage {
                     Copy-Item -Path $DriverStoreFolder -Destination "$fTempFolder/System32/HostDriverStore/FileRepository/" -Recurse -Force
 
                     # Get driver files from system32 etc and copy
-                    Write-Output -InputObject ('Done, getting files from System32 and SysWOW64')
+                    Write-Output -InputObject ('DriverStore folder copied, gathering files from System32 and SysWOW64')
                     $DriverFiles = $SignedDriverFiles | Where-Object { $_.Antecedent.DeviceID -like $GPU.DeviceID }.Dependent.Name
                     $System32Files = $DriverFiles | Where-Object { (Split-Path -Path $_ -Parent) -like "$Env:SYSTEMROOT\System32" }
                     $SysWOW64Files = $DriverFiles | Where-Object { (Split-Path -Path $_ -Parent) -like "$Env:SYSTEMROOT\SysWOW64" }
@@ -181,5 +188,6 @@ function New-GPUPDriverPackage {
             }
         }
         Write-Output -InputObject ('Driver package generation complete.')
+        Write-Output -InputObject ('Please copy it to your guest and extract the archive into C:\Windows\')
     }
 }
