@@ -160,7 +160,7 @@ function New-GPUPDriverPackage {
 
                     # Get driver files from system32 etc and copy
                     Write-Output -InputObject ('DriverStore folder copied, gathering files from System32 and SysWOW64')
-                    $DriverFiles = $SignedDriverFiles | Where-Object { $_.Antecedent.DeviceID -like $GPU.DeviceID }.Dependent.Name
+                    $DriverFiles = ($SignedDriverFiles | Where-Object { $_.Antecedent.DeviceID -like $GPU.DeviceID }).Dependent.Name
                     $System32Files = $DriverFiles | Where-Object { (Split-Path -Path $_ -Parent) -like "$Env:SYSTEMROOT\System32" }
                     $SysWOW64Files = $DriverFiles | Where-Object { (Split-Path -Path $_ -Parent) -like "$Env:SYSTEMROOT\SysWOW64" }
 
